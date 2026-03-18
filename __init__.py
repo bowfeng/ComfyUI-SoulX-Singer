@@ -104,18 +104,23 @@ if ensure_dependencies():
         from .nodes.model_loader import SoulXSingerModelLoader
         from .nodes.simple_synthesizer import SoulXSingerSimple
         from .nodes.advanced_synthesizer import SoulXSingerAdvanced
-        
+        from .nodes.midi_converter import SoulXSingerMetaToMIDI, SoulXSingerMIDIToMetaWithVocal
+
         NODE_CLASS_MAPPINGS["SoulXSingerModelLoader"] = SoulXSingerModelLoader
         NODE_CLASS_MAPPINGS["SoulXSingerSimple"] = SoulXSingerSimple
         NODE_CLASS_MAPPINGS["SoulXSingerAdvanced"] = SoulXSingerAdvanced
-        
+        NODE_CLASS_MAPPINGS["SoulXSingerMetaToMIDI"] = SoulXSingerMetaToMIDI
+        NODE_CLASS_MAPPINGS["SoulXSingerMIDIToMetaWithVocal"] = SoulXSingerMIDIToMetaWithVocal
+
         NODE_DISPLAY_NAME_MAPPINGS["SoulXSingerModelLoader"] = "🎤 SoulX-Singer Model Loader"
         NODE_DISPLAY_NAME_MAPPINGS["SoulXSingerSimple"] = "🎙️ SoulX-Singer Simple"
         NODE_DISPLAY_NAME_MAPPINGS["SoulXSingerAdvanced"] = "🎙️ SoulX-Singer Advanced"
-        
+        NODE_DISPLAY_NAME_MAPPINGS["SoulXSingerMetaToMIDI"] = "🔄 SoulX-Singer Meta to MIDI"
+        NODE_DISPLAY_NAME_MAPPINGS["SoulXSingerMIDIToMetaWithVocal"] = "🔄 SoulX-Singer MIDI to Meta (with Vocal)"
+
         logger.info(f"Nodes registered successfully (v{__version__})")
         logger.info(f"Registered nodes: {len(NODE_CLASS_MAPPINGS)}")
-        
+
     except Exception as e:
         logger.error(f"Failed to register nodes: {e}")
         import traceback

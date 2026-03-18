@@ -280,8 +280,8 @@ class SoulXSingerSimple:
             },
         }
     
-    RETURN_TYPES = ("AUDIO",)
-    RETURN_NAMES = ("audio",)
+    RETURN_TYPES = ("AUDIO", "STRING", "STRING")
+    RETURN_NAMES = ("audio", "prompt_meta_path", "target_meta_path")
     FUNCTION = "synthesize"
     CATEGORY = "SoulX-Singer"
     DESCRIPTION = "Simple singing voice synthesis with auto-preprocessing"
@@ -388,7 +388,7 @@ class SoulXSingerSimple:
                 max_merge_duration=20000,
                 language=prompt_language,
             )
-            
+            from preprocess.tools.midi_parser import meta2midi
             # Load generated metadata
             prompt_meta_path = self.temp_dir / "prompt_metadata" / "metadata.json"
             with open(prompt_meta_path, "r", encoding="utf-8") as f:
@@ -396,6 +396,11 @@ class SoulXSingerSimple:
             
             if not prompt_meta_list:
                 raise ValueError("Prompt preprocessing failed - no metadata generated")
+            
+            midi_path = prompt_meta_path.with_suffix(".mid")
+
+            # 调用 meta2midi 函数
+            meta2midi(prompt_meta_path, midi_path)
             
             prompt_meta = prompt_meta_list[0]  # Use first segment
             
@@ -417,6 +422,7 @@ class SoulXSingerSimple:
                 language=target_language,
             )
             
+
             # Load generated metadata
             target_meta_path = self.temp_dir / "target_metadata" / "metadata.json"
             with open(target_meta_path, "r", encoding="utf-8") as f:
@@ -424,6 +430,12 @@ class SoulXSingerSimple:
             
             if not target_meta_list:
                 raise ValueError("Target preprocessing failed - no metadata generated")
+            
+
+            midi_path = target_meta_path.with_suffix(".mid")
+
+            # 调用 meta2midi 函数
+            meta2midi(target_meta_path, midi_path)
             
             if pbar:
                 pbar.update_absolute(3, total_steps)
@@ -502,8 +514,9 @@ class SoulXSingerSimple:
             
             # Format output for ComfyUI
             output_audio = format_audio_for_comfyui(generated_merged, 24000)
-            
-            return (output_audio,)
+
+            # Return audio and metadata paths
+            return (output_audio, str(prompt_meta_path), str(target_meta_path))
             
         except Exception as e:
             # Handle interruption
